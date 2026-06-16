@@ -38,6 +38,15 @@ public class Insecure {
     ResultSet resultSet = statement.executeQuery(query);
     return resultSet.getString(0);
   }
+
+  public String taintedSQL2(HttpServletRequest request, Connection connection) throws Exception {
+    String user = request.getParameter("user");
+    String query = "SELECT userid FROM users WHERE username = '" + user  + "'";
+    Statement statement = connection.createStatement();
+    // Sanitize the SQL query to remove potentially dangerous characters before executing it
+    ResultSet resultSet = statement.executeQuery(Sanitize.sanitizeSQL(query));
+    return resultSet.getString(0);
+  }
   
   public String hotspotSQL(Connection connection, String user) throws Exception {
 	  Statement statement = null;
